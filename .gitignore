@@ -176,3 +176,8 @@ checkpoint
 data/
 *.txt
 *.md
+cpp/
+pymultiproc/
+Eigen/
+试验代码/
+run_separate/
