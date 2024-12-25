@@ -181,3 +181,5 @@ pymultiproc/
 Eigen/
 试验代码/
 run_separate/
+learn/
+*参考*

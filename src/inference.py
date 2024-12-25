@@ -64,7 +64,7 @@ def main():
             for record in test_set.take(-1):
                 x = record["x_train"]
                 utile = unary_from_image(x[0], ugenerator)
-                reftile = reference_from_image(x[0, ..., config.channel_start:config.channel_end:-1], refgenerator)
+                reftile = reference_from_image(x[0, ..., config.channel_start:config.channel_end:config.channel_order], refgenerator)
                 utiles.append(utile)
                 reftiles.append(reftile)
 

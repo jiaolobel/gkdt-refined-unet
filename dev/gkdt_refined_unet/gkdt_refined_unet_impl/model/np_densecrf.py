@@ -3,6 +3,8 @@ import numpy as np
 # from .bilateral_step_factory_v3 import BilateralStep
 # from .spatial_step_factory_v3 import SpatialStep
 
+from .dcrf_base import DenseCRFBase
+
 from .bilateral_step_factory_v9 import BilateralStep
 from .spatial_step_factory_v9 import SpatialStep
 
@@ -10,7 +12,7 @@ from .spatial_step_factory_v9 import SpatialStep
 
 # from .gkdt_refined_unet_config import GKDTRefinedUNetConfig
 
-class CRFComputation:
+class DenseCRF(DenseCRFBase):
     def __init__(self, config):
         self.config = config
     

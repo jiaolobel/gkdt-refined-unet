@@ -7,6 +7,8 @@
 // v9
 // try to improve efficiency
 
+// Experiments start. This .h file is derived from `gkdtree_v9.h`, version number removed.
+
 
 #include <math.h>
 #include <stdlib.h>
@@ -412,7 +414,7 @@ class GKDTFilter {
         nleaves = tree.nLeaves();
     }
 
-    void filter(const float *val, float *out) {
+    void compute(const float *val, float *out) {
         vector<float> leafValues(nleaves * vd, 0.0f);
         
         for (int i = 0; i < n; i++) {

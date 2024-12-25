@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from multiprocessing import Pool
 
-from .np_densecrf import DenseCRF
+from .cpp_densecrf import DenseCRF
 # from .dcrf_base import DenseCRFBase
 
 from ..config.global_config import GlobalConfig
@@ -59,4 +59,15 @@ def refine_mp(utiles: list[np.ndarray], reftiles: list[np.ndarray], config: Glob
             rfntiles.append(r.get())
 
     return rfntiles
+    
+    # - MP disabled, name to `refine`
+    # dcrf = DenseCRF(config)
+    # rfntiles = list()
+    # for i in range(len(utiles)):
+    #     utile, reftile = utiles[i], reftiles[i]
+    #     rfntile = dcrf.mean_field_approximation(utile, reftile, )
+    #     rfntiles.append(rfntile)
+
+    # return rfntiles
+
 

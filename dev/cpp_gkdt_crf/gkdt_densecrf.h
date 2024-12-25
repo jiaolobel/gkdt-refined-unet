@@ -6,10 +6,10 @@
 using namespace std;
 using namespace Eigen;
 
-class DenseCRF
-{
+class DenseCRF {
 protected:
-    int H_, W_, N_, n_classes_, d_bifeats_, d_spfeats_, d_val_;
+    int H_, W_, N_, n_classes_;
+    int d_bifeats_, d_spfeats_, d_val_;
 
     float theta_alpha_, theta_beta_, theta_gamma_;
 
@@ -24,28 +24,17 @@ protected:
 
 public:
     DenseCRF(
-        int H,
-        int W,
-        int n_classes,
-        int d_bifeats,
-        int d_spfeats,
-        float theta_alpha,
-        float theta_beta,
-        float theta_gamma,
-        float bilateral_compat,
-        float spatial_compat,
+        int H, int W, int n_classes,
+        int d_bifeats, int d_spfeats,
+        float theta_alpha, float theta_beta, float theta_gamma,
+        float bilateral_compat, float spatial_compat,
         int n_iterations
-    )
-    {
-        H_ = H;
-        W_ = W;
-        N_ = H_ * W_;
-        n_classes_ = n_classes;
-        d_bifeats_ = d_bifeats;
-        d_spfeats_ = d_spfeats;
+    ) {
+        H_ = H; W_ = W; N_ = H_ * W_; n_classes_ = n_classes;
+        d_bifeats_ = d_bifeats; d_spfeats_ = d_spfeats;
         d_val_ = n_classes_ + 1;
 
-        theta_alpha_ = theta_alpha;
+        theta_alpha_ = theta_alpha; 
         theta_beta_ = theta_beta;
         theta_gamma_ = theta_gamma;
 
@@ -60,8 +49,7 @@ public:
         // potts_compatibility(compatibility_matrix_); // Potts model
     }
 
-    ~DenseCRF()
-    {
+    ~DenseCRF() {
         delete bilateral_step_;
         delete spatial_step_;
     }
@@ -73,8 +61,7 @@ public:
     //     labelcompatibility *= -1;
     // }
 
-    void softmax(const MatrixXf &in, MatrixXf &out)
-    {
+    void softmax(const MatrixXf &in, MatrixXf &out) {
         // in and out share the shape of [d, N], channel-first
         out = (in.rowwise() - in.colwise().maxCoeff()).array().exp();
         RowVectorXf sm = out.colwise().sum();
@@ -85,25 +72,25 @@ public:
         const float *unary1, // n_channels + 1 or n_classes + 1
         const float *ref,
         float *out1
-    )
-    {
+    ) {
         // Create bilateral and spatial features
         float *bilateral_feats = new float[N_ * d_bifeats_];
         float *spatial_feats = new float[N_ * d_spfeats_];
 
-        for (int y = 0; y < H_; y++)
-        {
-            for (int x = 0; x < W_; x++)
-            {
-                bilateral_feats[y * W_ * d_bifeats_ + x * d_bifeats_ + 0] = (float)x / theta_alpha_;
-                bilateral_feats[y * W_ * d_bifeats_ + x * d_bifeats_ + 1] = (float)y / theta_alpha_;
-                for (int d = d_spfeats_; d < d_bifeats_; d++)
-                {
-                    bilateral_feats[y * W_ * d_bifeats_ + x * d_bifeats_ + d] = ref[y * W_ * (d_bifeats_ - d_spfeats_) + x * (d_bifeats_ - d_spfeats_) + (d - d_spfeats_)] / theta_beta_;
+        for (int y = 0; y < H_; y++) {
+            for (int x = 0; x < W_; x++) {
+                int feat_idx = y * W_ * d_bifeats_ + x * d_bifeats_;
+                int ref_idx = y * W_ * (d_bifeats_ - d_spfeats_) + x * (d_bifeats_ - d_spfeats_);
+                bilateral_feats[feat_idx + 0] = (float)x / theta_alpha_;
+                bilateral_feats[feat_idx + 1] = (float)y / theta_alpha_;
+                for (int d = d_spfeats_; d < d_bifeats_; d++) {
+                    bilateral_feats[feat_idx + d] = ref[ref_idx + (d - d_spfeats_)] / theta_beta_;
                 }
 
-                spatial_feats[y * W_ * d_spfeats_ + x * d_spfeats_ + 0] = (float)x / theta_gamma_;
-                spatial_feats[y * W_ * d_spfeats_ + x * d_spfeats_ + 1] = (float)y / theta_gamma_;
+                feat_idx = y * W_ * d_spfeats_ + x * d_spfeats_;
+
+                spatial_feats[feat_idx + 0] = (float)x / theta_gamma_;
+                spatial_feats[feat_idx + 1] = (float)y / theta_gamma_;
             }
         }
 
@@ -140,8 +127,7 @@ public:
         MatrixXf message_passing(d_val_, N_);
         MatrixXf pairwise(d_val_, N_);
 
-        for (int i = 0; i < n_iterations_; i++)
-        {
+        for (int i = 0; i < n_iterations_; i++) {
             printf("Iteration %d / %d...\n", i + 1, n_iterations_);
 
             tmp1 = -unary1_mat; // [n_classes, N]
@@ -172,4 +158,3 @@ public:
         out_mat = Q;
     }
 };
-

@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import cv2
 
 from gkdt_pydensecrf import PyDenseCRF
+# from cpp_densecrf import DenseCRF
+# from global_config import GlobalConfig
 
 '''
 CRF inference
@@ -87,16 +89,16 @@ if __name__ == "__main__":
 
     h, w = img.shape[0], img.shape[1]
     img = img.astype(np.float32)
-    pred1 = np.ones((h, w, n_labels), dtype=np.float32)
+    pred1 = np.ones((h, w, n_labels + 1), dtype=np.float32)
     pred1[..., :n_labels] = unary
 
     pred1, img = pred1.reshape((-1, )), img.reshape((-1, ))
     dcrf.inference(pred1, img / 255., pred1)
-    pred1 = pred1.reshape((h, w, n_labels))
+    pred1 = pred1.reshape((h, w, n_labels + 1))
 
     # pred = inference(img / 255., unary, n_labels, theta_alpha=80., theta_beta=.0625, theta_gamma=3., spatial_compat=3., bilateral_compat=10., num_iterations=10)
-    # pred = pred1[..., :-1] / pred1[..., -1:]
-    pred = pred1
+    pred = pred1[..., :-1] / (pred1[..., -1:] + 1e-8)
+    # pred = pred1
     
     MAP = np.argmax(pred, axis=-1)
     plt.imshow(MAP)
