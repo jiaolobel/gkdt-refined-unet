@@ -159,6 +159,23 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# Libin: experiment data
+data/
+
+# Libin: codes for test and learn
+cpp/
+pymultiproc/
+试验代码/
+*参考*
+learn/
+
+# Libin: intermediate experiment
+run_separate/
+codetest_output/
+
+# Libin: Lib
+Eigen/
+
 # Libin: Ignore tf.saved_model files.
 *.pb
 *.data*
@@ -170,16 +187,17 @@ checkpoint
 *.index
 *.npz
 *.png
+*.xlsx
+*.xls
 *.csv
-
-# Libin: data/
-data/
 *.txt
 *.md
-cpp/
-pymultiproc/
-Eigen/
-试验代码/
-run_separate/
-learn/
-*参考*
+
+
+
+
+
+
+
+
+

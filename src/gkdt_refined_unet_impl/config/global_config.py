@@ -1,3 +1,15 @@
+"""
+Global configuration for experiments of GKDT Refined UNet
+
+baseline parameters: theta_alpha = 80.0, theta_beta = 0.03125, theta_gamma = 3.0, rgb ref channels (band 4, 3, 2), 8 processes.
+
+Hyperparameter test: theta_alpha, theta_beta.
+
+Multi-band test: rgb and 7-band.
+
+Time efficiency: num. of processes. and time consumption in terms of other parameters. 
+"""
+
 class GlobalConfig():
     def __init__(self) -> None:
         # ->> 1. Hyperparameter test
@@ -41,27 +53,26 @@ class GlobalConfig():
         self.theta_beta = [0.03125, 0.0625, 0.125, 0.25][0] # 0.03125, 0.0625, 0.125, 0.25 with theta_alpha=80.0
         self.theta_gamma = 3.0
         # - 2. numbers of processes
-        self.n_processes = [8, 4, 2, 1][0]
+        self.n_processes = [8, 4, 2, 1][2]
         # - 3. multi-band, start = 4 and end = 1 refer to bands 4, 3, and 2 (false-color, RGB), start = 0 and end = 7 refer to bands 1 to 7 (multi-band). [4, 3, 2] is commonly used as false-color image. 
-        self.channels = ["rgb", "multiband"][1]
+        self.channels = ["rgb", "multiband"][0]
         # - 4. data source
         self.dataset = ["l8", "rice"][0] # l8 or rice, l8 as default
         
+        # - Input and output paths
+        self.data_path = "E:/Research/experiment_data/{}/test".format(self.dataset) 
+        self.save_path = "E:/Research/experiment_results/gkdt_rfn_unet/{}/{}/n_processes={}/a={}, b={}, r={}".format(self.dataset, self.channels, self.n_processes, self.theta_alpha, self.theta_beta, self.theta_gamma) # RGB
+        self.log_fname = "log.csv"
+
+        # - Pretrained model
+        self.ugenerator_path = "gkdt_refined_unet_impl/parameter/saved_model/unary_generator" if self.dataset == "l8" else None
         # - Reference channels
         self.channel_start = 4 if self.channels == "rgb" else 0 # channel_start, included
         self.channel_end = 1 if self.channels == "rgb" else 7 # channel_end, excluded
         self.n_channels = abs(self.channel_end - self.channel_start)
         self.channel_order = 1 if self.channel_end - self.channel_start > 0 else -1
         
-        # - Output path
-        self.save_path = "../output/{}/{}/a={}, b={}, r={}".format(self.dataset, self.channels, self.theta_alpha, self.theta_beta, self.theta_gamma) # RGB
-        # - Input and output
-        self.ugenerator_path = "gkdt_refined_unet_impl/parameter/saved_model/unary_generator" if self.dataset == "l8" else None
-        self.data_path = "../data/{}/testcase/".format(self.dataset)
-        self.log_fname = "log.csv"
-        
         # - Input and output shapes, use as default
-        # self.dcrf_impl = "CPP" # disabled. "NP" or "CPP"
         self.tile_height = 512
         self.tile_width = 512
         self.num_bands = 7

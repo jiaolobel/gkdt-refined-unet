@@ -2,6 +2,8 @@
 run inference by `python inference.py`, in a multi-processing way.
 
 UNet/ugeneration/reference in TF, CRF refinement in MP of CPU
+
+Baseline experiment.
 """
 
 import os
